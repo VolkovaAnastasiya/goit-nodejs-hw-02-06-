@@ -7,4 +7,4 @@ const catchHandler = (controller) => async (req, res, next) => {
   }
 };
 
-module.exports = { catchHandler };
+module.exports =  catchHandler;

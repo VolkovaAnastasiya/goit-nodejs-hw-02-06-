@@ -1,36 +1,33 @@
 const express = require("express");
-const contactController = require("../../controllers/contacts.controller");
-const { catchHandler } = require("../../middleware/catchHandler");
-const { checkContacRequest, validate } = require("../../middleware/validates");
-const { contactShema } = require("../../shema/contact.shema");
+const { contactController: ctrl } = require("../../controllers/contacts");
+const {
+  catchHandler,
+  checkContacRequest,
+  validate,
+} = require("../../middleware");
+
+const { joiShema, joiFavoriteSchema } = require("../../models/contact");
 
 const router = express.Router();
 
-router.get(
-  "/",
-  catchHandler(contactController.getAllContacts.bind(contactController))
-);
+router.get("/", catchHandler(ctrl.getAllContacts));
 
-router.get(
-  "/:contactId",
-  catchHandler(contactController.getContactById.bind(contactController))
-);
+router.get("/:contactId", catchHandler(ctrl.getContactById));
 
-router.post(
-  "/",
-  [validate(contactShema)],
-  catchHandler(contactController.createContact.bind(contactController))
-);
-
-router.delete(
-  "/:contactId",
-  catchHandler(contactController.deleteContact.bind(contactController))
-);
+router.post("/", validate(joiShema), catchHandler(ctrl.createContact));
 
 router.put(
   "/:contactId",
-  [checkContacRequest()],
-  catchHandler(contactController.updateContact.bind(contactController))
+  checkContacRequest(joiShema),
+  catchHandler(ctrl.updateContact)
 );
+
+router.patch(
+  "/:contactId/favorite",
+  validate(joiFavoriteSchema),
+  catchHandler(ctrl.updateStatusContact)
+);
+
+router.delete("/:contactId", catchHandler(ctrl.deleteContact));
 
 module.exports = router;
