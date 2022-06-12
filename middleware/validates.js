@@ -9,8 +9,7 @@ const checkContacRequest = () => async (req, res, next) => {
 };
 
 const validate = (schema) => async (req, res, next) => {
-  const contact = req.body;
-  const { error } = schema.validate(contact);
+  const { error } = schema.validate(req.body);
 
   if (error) {
     return res.status(400).json({ message: error.message });
