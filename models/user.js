@@ -1,5 +1,6 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
+const gravatar = require("gravatar");
 
 const userSchema = new Schema(
   {
@@ -22,6 +23,11 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    avatarURL: {
+      type: String,
+      required: true,
+      default: () => gravatar.url(this.email, {}, true),
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -31,6 +37,10 @@ const joiUserSchema = Joi.object({
   email: Joi.string().required(),
 });
 
+const shemaJoiUpdateSubscription = Joi.object().keys({
+  subscription: Joi.string().valid("starter", "pro", "business"),
+});
+
 const User = model("user", userSchema);
 
-module.exports = { User, joiUserSchema };
+module.exports = { User, joiUserSchema, shemaJoiUpdateSubscription };
