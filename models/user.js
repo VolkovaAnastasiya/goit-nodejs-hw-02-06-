@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
-const gravatar = require("gravatar");
+// const gravatar = require("gravatar");
 
 const userSchema = new Schema(
   {
@@ -26,7 +26,7 @@ const userSchema = new Schema(
     avatarURL: {
       type: String,
       required: true,
-      default: () => gravatar.url(this.email, {}, true),
+      // default: () => gravatar.url(this.email, {}, true),
     },
   },
   { versionKey: false, timestamps: true }

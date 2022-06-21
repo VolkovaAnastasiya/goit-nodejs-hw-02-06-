@@ -21,8 +21,12 @@ class UserService {
     return await User.findByIdAndUpdate(body.id, { ...body });
   }
 
-  async updateUserAvatar(id, avatarUrl) {
-    return await User.findByIdAndUpdate(id, { avatarUrl }, { new: true });
+  async updateUserAvatar(body) {
+    return await User.findByIdAndUpdate(
+      body.id,
+      { ...body.avatarUrl },
+      { new: true }
+    );
   }
 }
 
