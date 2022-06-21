@@ -1,7 +1,7 @@
 const userService = require("../services/user");
 const path = require("path");
 const fs = require("fs/promises");
-// const Jimp = require("jimp");
+const Jimp = require("jimp");
 
 class UserControlles {
   async getUserBiId(req, res) {
@@ -53,8 +53,8 @@ class UserControlles {
       const avatarURL = path.join("public", "avatars", imageName);
       await userService.updateUser({ id, avatarURL });
 
-      // const avatar = await Jimp.read(avatarPath);
-      // avatar.cover(250, 250).write(avatarPath);
+      const avatar = await Jimp.read(resultUpload);
+      avatar.resize(250, 250).write(resultUpload);
 
       res.json({ avatarURL });
     } catch (error) {
