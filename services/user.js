@@ -20,6 +20,14 @@ class UserService {
   async updateUser(body) {
     return await User.findByIdAndUpdate(body.id, { ...body });
   }
+
+  async updateUserAvatar(body) {
+    return await User.findByIdAndUpdate(
+      body.id,
+      { ...body.avatarUrl },
+      { new: true }
+    );
+  }
 }
 
 const userService = new UserService();

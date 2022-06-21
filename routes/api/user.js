@@ -1,15 +1,23 @@
 const express = require("express");
-// const { joiUserSchema } = require("../../models/user");
-const {
-  catchHandler,
-  auth,
-  //   checkContacRequest,
-  //   validate,
-} = require("../../middleware");
+
+const { catchHandler, auth, upload, validate } = require("../../middleware");
 const { userControlles: ctrl } = require("../../controllers/users");
+const { shemaJoiUpdateSubscription } = require("../../models/user");
 
 const router = express.Router();
 
 router.get("/current", auth, catchHandler(ctrl.getCurrent));
+router.put(
+  "/subscription",
+  auth,
+  validate(shemaJoiUpdateSubscription),
+  catchHandler(ctrl.updateUserSubscription)
+);
+router.patch(
+  "/avatars",
+  auth,
+  upload.single("avatar"),
+  catchHandler(ctrl.updateAvatar)
+);
 
 module.exports = router;

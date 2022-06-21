@@ -1,6 +1,8 @@
 const userService = require("../services/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const gravatar = require("gravatar");
+// const { User } = require("../models/user");
 
 class UserControlles {
   async signup(req, res) {
@@ -12,7 +14,12 @@ class UserControlles {
     }
 
     const heshPass = await bcrypt.hash(password, 10);
-    const newUser = await userService.createUser({ password: heshPass, email });
+    const avatarURL = gravatar.url(email);
+    const newUser = await userService.createUser({
+      password: heshPass,
+      email,
+      avatarURL,
+    });
 
     res.status(201).json({
       status: "success",
@@ -21,6 +28,7 @@ class UserControlles {
         user: {
           email: newUser.email,
           password,
+          avatarURL,
         },
       },
     });
