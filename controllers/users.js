@@ -2,6 +2,7 @@ const userService = require("../services/user");
 const path = require("path");
 const fs = require("fs/promises");
 const Jimp = require("jimp");
+const { User } = require("../models/user");
 
 class UserControlles {
   async getUserBiId(req, res) {
@@ -61,6 +62,22 @@ class UserControlles {
       await fs.unlink(avatarPath);
       throw error;
     }
+  }
+
+  async verifyEmail(req, res) {
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
+    if (!user) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    await User.findByIdAndUpdate(user.id, {
+      verify: true,
+      verificationToken: null,
+    });
+
+    res.json({
+      message: "Verify success",
+    });
   }
 }
 
