@@ -2,6 +2,8 @@ const userService = require("../services/user");
 const path = require("path");
 const fs = require("fs/promises");
 const Jimp = require("jimp");
+const { User } = require("../models/user");
+const { sendEmail } = require("../helpers");
 
 class UserControlles {
   async getUserBiId(req, res) {
@@ -61,6 +63,49 @@ class UserControlles {
       await fs.unlink(avatarPath);
       throw error;
     }
+  }
+
+  async verifyEmail(req, res) {
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
+    if (!user) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    await User.findByIdAndUpdate(user.id, {
+      verify: true,
+      verificationToken: null,
+    });
+
+    res.json({
+      message: "Verify success",
+    });
+  }
+
+  async againVerifyEmail(req, res) {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Missing required field email" });
+    }
+    const user = await userService.getUserByEmail(email);
+
+    if (user.verify) {
+      return res
+        .status(400)
+        .json({ message: "Verification has already been passed" });
+    }
+
+    const mail = {
+      to: email,
+      subject: "Welcome again to PhoneBook! Confirm Your Email",
+      html: `<a target="_blank" href="http://localhost:3000/api/users/verify/${user.verificationToken}">Confirm Email</a>`,
+    };
+    await sendEmail(mail);
+
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Verification email sent",
+    });
   }
 }
 
